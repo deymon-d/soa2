@@ -1,0 +1,145 @@
+openapi: 3.1.0
+info:
+  title: FastAPI
+  version: 0.1.0
+paths:
+  /signup:
+    post:
+      summary: Create User
+      operationId: create_user_signup_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /signin:
+    post:
+      summary: Authorize
+      operationId: signin_post
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+  /user:
+    put:
+      summary: Update
+      operationId: update_user_put
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/User'
+        required: true
+      responses:
+        '200':
+          description: Successful Response
+          content:
+            application/json:
+              schema: {}
+        '422':
+          description: Validation Error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HTTPValidationError'
+components:
+  schemas:
+    HTTPValidationError:
+      properties:
+        detail:
+          items:
+            $ref: '#/components/schemas/ValidationError'
+          type: array
+          title: Detail
+      type: object
+      title: HTTPValidationError
+    User:
+      properties:
+        login:
+          anyOf:
+            - type: string
+          title: login
+        password:
+          anyOf:
+            - type: string
+          title: passwpord
+        first_name:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: name
+        last_name:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: surname
+        birthday:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: birthday
+        email:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: email
+        phone:
+          anyOf:
+            - type: string
+            - type: 'null'
+          title: phone
+      type: object
+      required:
+        - login
+        - password
+      title: User
+    ValidationError:
+      properties:
+        loc:
+          items:
+            anyOf:
+              - type: string
+              - type: integer
+          type: array
+          title: Location
+        msg:
+          type: string
+          title: Message
+        type:
+          type: string
+          title: Error Type
+      type: object
+      required:
+        - loc
+        - msg
+        - type
+      title: ValidationError
+    HTTPException:
+    
