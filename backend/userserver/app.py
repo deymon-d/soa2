@@ -63,7 +63,7 @@ def create_task(task: Task, token: Annotated[int, Cookie()]):
 
 @app.put("/tasks")
 def update_task(task: Task, token: Annotated[int, Cookie()]):
-    if task.executor_id <= 0 or task.priority <= 0:
+    if task.executor_id <= 0 or task.priority <= 0 and task.id <= 0:
         raise HTTPException(404, "Bad request")
     request = task.__dict__
     request["user_id"] = token
