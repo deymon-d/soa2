@@ -37,17 +37,16 @@ class DBAPI:
 
     def get_user(self, user: user_lib.User) -> user_lib.User:
         with Session(self.engine) as session:
-            users = session.query(User).filter(User.login == user.login).all()
-            session.commit()
-            user = user_lib.User()
-            user.login = users[0].login
-            user.password = users[0].password
-            user.first_name = users[0].first_name
-            user.last_name = users[0].last_name
-            user.email = users[0].email,
-            user.phone = users[0].phone,
-            user.birthday = users[0].birthday
-            return user
+            user = session.query(User).filter(User.login == user.login).first()
+            user_res = user_lib.User()
+            user_res.login = user.login
+            user_res.password = user.password
+            user_res.first_name = user.first_name
+            user_res.last_name = user.last_name
+            user_res.email = user.email,
+            user_res.phone = user.phone,
+            user_res.birthday = user.birthday
+            return user_res
 
     def update_user(self, user: user_lib.User) -> None:
         with Session(self.engine) as session:
@@ -60,4 +59,8 @@ class DBAPI:
             ))
             session.commit()
 
+    def get_user_id(self, user: user_lib.User) -> int:
+        with Session(self.engine) as session:
+            user = session.query(User).filter(User.login == user.login).first()
+            return user.id
 

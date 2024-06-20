@@ -1,5 +1,4 @@
 from pydantic import BaseModel
-from dataclasses import dataclass
 
 class User(BaseModel):
     login: str = None

@@ -1,0 +1,69 @@
+syntax = "proto3";
+
+package task_storage;
+
+service TaskStorage {
+    rpc CreateTask (CreateTaskRequest) returns (CreateTaskResponse) {}
+    rpc UpdateTask (UpdateTaskRequest) returns (UpdateTaskResponse) {}
+    rpc DeleteTask (DeleteTaskRequest) returns (DeleteTaskResponse) {}
+    rpc GetTask (GetTaskRequest) returns (Task) {}
+    rpc GetTasks (GetTasksRequest) returns (GetTasksResponse) {}
+}
+
+message CreateTaskRequest {
+    uint64 creator_id = 1;
+    uint64 executor_id = 2;
+    string title = 3;
+    string description = 4;
+    uint64 priority = 5;
+}
+
+message CreateTaskResponse {
+    uint64 id = 1;
+}
+
+message UpdateTaskRequest {
+    uint64 id = 1;
+    uint64 executor_id = 2;
+    string title = 3;
+    string description = 4;
+    uint64 priority = 5;
+    string status = 6;
+    uint64 user_id = 7;
+}
+
+message UpdateTaskResponse {
+}
+
+message DeleteTaskRequest {
+    uint64 id = 1;
+    uint64 user_id = 2;
+}
+
+message DeleteTaskResponse {
+}
+
+message Task {
+    uint64 id = 1;
+    uint64 creator_id = 2;
+    uint64 executor_id = 3;
+    string title = 4;
+    string description = 5;
+    uint64 priority = 6;
+    string status = 7;    
+}
+
+message GetTaskRequest {
+    uint64 id = 1;
+    uint64 user_id = 2;
+}
+
+message GetTasksRequest {
+    uint64 offset = 1;
+    uint64 count = 2;
+    uint64 user_id = 3;
+}
+
+message GetTasksResponse {
+    repeated Task tasks = 1;
+}

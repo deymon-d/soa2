@@ -1,4 +1,4 @@
-fastapi[all]
+grpcio
+grpcio-tools
 psycopg2
 sqlalchemy
-uvicorn
