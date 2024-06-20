@@ -34,6 +34,9 @@ def authorize(user: User, response: Response):
     if user_info.login != user.login:
         raise HTTPException(status_code=404, detail="User doesn't exist")
     response.set_cookie("token", db_api.get_user_id(user))
+    response.status_code = 200
+    response.body = bytes(json.dumps({"id": db_api.get_user_id(user)}), encoding="utf8")
+    return response
 
 
 @app.put("/user")
@@ -46,7 +49,8 @@ def update(user: User, token: Annotated[int, Cookie()]):
 
 @app.post("/tasks")
 def create_task(task: Task, token: Annotated[int, Cookie()]):
-    print(task)
+    if task.executor_id <= 0 or task.priority <= 0:
+        raise HTTPException(404, "Bad request")
     task_request = events.CreateTaskRequest(
        creator_id=token,
        executor_id=task.executor_id,
@@ -54,12 +58,13 @@ def create_task(task: Task, token: Annotated[int, Cookie()]):
        description=task.description,
        priority=task.priority        
     )
-    logging.error(task_request)
     task_response = stub.CreateTask(task_request)
     return JSONResponse(json.loads(MessageToJson(task_response)))
 
 @app.put("/tasks")
 def update_task(task: Task, token: Annotated[int, Cookie()]):
+    if task.executor_id <= 0 or task.priority <= 0:
+        raise HTTPException(404, "Bad request")
     request = task.__dict__
     request["user_id"] = token
     del request["creator_id"]
@@ -68,19 +73,19 @@ def update_task(task: Task, token: Annotated[int, Cookie()]):
     return JSONResponse(json.loads(MessageToJson(task_response)))
 
 @app.delete("/tasks/{task_id}")
-def update_task(task_id: int, token: Annotated[int, Cookie()]):
+def delete_task(task_id: int, token: Annotated[int, Cookie()]):
     task_request = events.DeleteTaskRequest(id=task_id, user_id=token)
     task_response = stub.DeleteTask(task_request)
     return JSONResponse(json.loads(MessageToJson(task_response)))
 
 @app.get("/tasks/{task_id}")
-def update_task(task_id: int, token: Annotated[int, Cookie()]):
+def get_task(task_id: int, token: Annotated[int, Cookie()]):
     task_request = events.GetTaskRequest(id=task_id, user_id=token)
     task_response = stub.GetTask(task_request)
     return JSONResponse(json.loads(MessageToJson(task_response)))
 
 @app.get("/tasks")
-def update_task(offset: int, count: int, token: Annotated[int, Cookie()]):
+def get_tasks(offset: int, count: int, token: Annotated[int, Cookie()]):
     task_request = events.GetTasksRequest(offset=offset, count=count, user_id=token)
     task_response = stub.GetTasks(task_request)
     return JSONResponse(json.loads(MessageToJson(task_response)))

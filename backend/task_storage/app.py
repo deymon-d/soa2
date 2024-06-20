@@ -46,7 +46,7 @@ class TaskStorageServicer(events_grpc.TaskStorageServicer):
 
     def GetTask(self, request: events.GetTaskRequest, context):
         task = db_engine.get_task_by_id(request.id, request.user_id)
-        if not task:
+        if task is None:
             return events.Task()
         return create_task_from_dict(task.__dict__)
 

@@ -40,6 +40,7 @@ class Executor:
 
         with Session(self.engine) as session:
             new_task = Tasks(**get_task_fields(params))
+            new_task.status = "Open"
             session.add(new_task)
             session.commit()
             session.refresh(new_task)
@@ -69,11 +70,10 @@ class Executor:
 
     def get_task_by_id(self, task_id: int, user_id: int) -> Tasks | None:
         with Session(self.engine) as session:
-            task = session.query(Tasks).filter(Tasks.id == task_id).first()
-            if not task:
-                return None  
-            if task.creator_id != user_id and task.executor_id != user_id:
-                return None
+            task = session.query(Tasks).filter(Tasks.id == task_id, or_(
+                Tasks.creator_id == user_id,
+                Tasks.executor_id == user_id
+            )).first()
             return task
 
     def get_tasks(self, count: int, offset: int, user_id: int):
